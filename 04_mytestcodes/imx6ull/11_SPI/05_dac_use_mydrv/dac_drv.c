@@ -162,12 +162,11 @@ static int __init spidev_init(void)
 	}
 	return status;
 }
-module_init(spidev_init);
-
 static void __exit spidev_exit(void)
 {
 	spi_unregister_driver(&spidev_spi_driver);
 }
+module_init(spidev_init);
 module_exit(spidev_exit);
 
 MODULE_LICENSE("GPL");

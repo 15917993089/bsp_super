@@ -37,7 +37,7 @@ void oled_set_dc_pin(int val)//设置引脚的数据
 
 void spi_write_datas(unsigned char *buf, int len)
 {
-	write(fd_spidev, buf, len);
+	write(fd_spidev, buf, len);//不断往打开的设备写入buf内的内容，写入的是什么内容呢?
 }
 
 
@@ -204,8 +204,8 @@ void OLED_DIsp_All(void)
 	 * 2020/03/15		 V1.0	  芯晓		  创建
  ***********************************************************************/
 void OLED_DIsp_Set_Pos(int x, int y)
-{ 	oled_write_cmd_data(0xb0+y,OLED_CMD);
-	oled_write_cmd_data((x&0x0f),OLED_CMD); 
+{ 	oled_write_cmd_data(0xb0+y,OLED_CMD);//设置页地址
+	oled_write_cmd_data((x&0x0f),OLED_CMD); //设置行地址
 	oled_write_cmd_data(((x&0xf0)>>4)|0x10,OLED_CMD);
 }   	      	   			 
 /**********************************************************************
@@ -257,8 +257,8 @@ void OLED_DIsp_String(int x, int y, char *str)
 	while (str[j])
 	{		
 		OLED_DIsp_Char(x, y, str[j]);//显示单个字符
-		x += 8;
-		if(x > 127)
+		x += 8;//一个字节一个字节显示，所以要加8，牛逼
+		if(x > 127)//如果超过一行的量就跳到下一页
 		{
 			x = 0;
 			y += 2;
@@ -285,7 +285,7 @@ void OLED_DIsp_CHinese(unsigned char x,unsigned char y,unsigned char no)
 	OLED_DIsp_Set_Pos(x,y);	
     for(t=0;t<16;t++)
 	{//显示上半截字符	
-		oled_write_cmd_data(hz_1616[no][t*2],OLED_DATA);
+		oled_write_cmd_data(hz_1616[no][t*2],OLED_DATA);//因为取字模是以列来取的
 		adder+=1;
     }	
 	OLED_DIsp_Set_Pos(x,y+1);	

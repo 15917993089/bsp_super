@@ -167,7 +167,7 @@ static int mpu6050_probe(struct i2c_client *pclt,const struct i2c_device_id *pid
 	ret = register_chrdev_region(devno,mpu6050_num,"mpu6050");
 	if(ret)//返回为就是出错！
 	{
-		ret = alloc_chrdev_region(&devno,minor,mpu6050_num,"mpu6050");//出错让系统自动帮我们申请一个
+		ret = alloc_chrdev_region(&devno,minor,mpu6050_num,"mpu6050");//注册出错让系统自动帮我们申请一个
 
 		if(ret)//再次返回1就是又出错了
 		{
@@ -187,12 +187,13 @@ static int mpu6050_probe(struct i2c_client *pclt,const struct i2c_device_id *pid
 		return -1;
 	}
 	memset(pgmydev,0,sizeof(struct mpu6050_dev));
-	pgmydev->pctl = pclt;//①
+	pgmydev->pctl = pclt;//①//因为kmalloc的原因所以它只能放在这里
 	cdev_init(&pgmydev->mydev,&myops);//给struct cdev 对象指定操作函数集
 	
 	/* 将 struct cdev 对象添加到内核对应的数据结构里 */
 	pgmydev->mydev.owner = THIS_MODULE;
 	cdev_add(&pgmydev->mydev,devno,mpu6050_num);
+	//硬件相关操作
 	init_mpu6050(pgmydev->pctl);//②把二级外设也加载一下
 	return 0;
 }

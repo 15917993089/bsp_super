@@ -11,12 +11,12 @@ static int read_data_from_mpu6050(int fd,unsigned char slave,unsigned char reg,u
 	work.msgs = msgs;
 	work.nmsgs = 2;
 	
-	msgs[0].addr = slave;
+	msgs[0].addr = slave;//从机地址和寄存器地址
 	msgs[0].flags = 0;
 	msgs[0].buf = buf1;
 	msgs[0].len = 1;
 
-	msgs[1].addr = slave;
+	msgs[1].addr = slave;//从机地址，和读回来两个字节的数据
 	msgs[1].flags = I2C_M_RD;
 	msgs[1].buf = buf2;
 	msgs[1].len = 1;
@@ -26,7 +26,7 @@ static int read_data_from_mpu6050(int fd,unsigned char slave,unsigned char reg,u
 		printf("ioctl I2C_RDWR failed,in read_data_from_mpu6050\n");
 		return -1;
 	}else{
-		*pdata = buf2[0];
+		*pdata = buf2[0];//这一步赋值是真的很牛逼！！！！！！！！
 		return 0;
 	}
 	return 0;
@@ -56,7 +56,7 @@ static int write_data_to_mpu6050(int fd,unsigned char slave,unsigned char reg,un
 }
 int init_mpu6050(int fd){
 	int ret = 0;
-	ret = ioctl(fd,I2C_TENBIT,0);
+	ret = ioctl(fd,I2C_TENBIT,0);//0表示7为的地址位
 	if(ret < 0){
 		printf("ioctl I2C_TENBIT failed,in init_mpu6050\n");
 		return -1;
@@ -72,7 +72,7 @@ int init_mpu6050(int fd){
 	ret = write_data_to_mpu6050(fd,0x68,ACCEL_CONFIG,0x19);
 	ret = write_data_to_mpu6050(fd,0x68,GYRO_CONFIG,0xF8);
 	if(ret < 0){
-		printf("write inin data to mpu6050 failed,in inint_mpu6050\n");
+		printf("write init data to mpu6050 failed,in inint_mpu6050\n");
 		return -1;
 	}
 	return 0;

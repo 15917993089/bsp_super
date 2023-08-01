@@ -32,8 +32,8 @@ int read_gyroz(int fd);
 #define ACCEL_YOUT_L 0x3E
 #define ACCEL_ZOUT_H 0x3F
 #define ACCEL_ZOUT_L 0x40
-#define TEMP_OUT_H 0x41
-#define TEMP_OUT_L 0x42
+#define TEMP_OUT_H   0x41
+#define TEMP_OUT_L   0x42
 #define GYRO_XOUT_H 0x43
 #define GYRO_XOUT_L 0x44
 #define GYRO_YOUT_H 0x45
@@ -46,13 +46,13 @@ int read_gyroz(int fd);
 #define I2C_SLAVE	0x0703	/* Use this slave address */
 #define I2C_TENBIT	0x0704	/* 0 for 7 bit addrs, != 0 for 10 bit */
 
-#define I2C_RDWR        0x0707
+#define I2C_RDWR    0x0707
 
 struct i2c_msg {
 	unsigned short addr;
 	unsigned short flags;
 #define I2C_M_TEN 0x0010
-#define I2C_M_RD 0x0001
+#define I2C_M_RD  0x0001
 	unsigned short len;
 	unsigned char *buf;
 };
