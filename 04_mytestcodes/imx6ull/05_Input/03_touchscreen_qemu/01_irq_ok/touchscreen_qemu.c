@@ -83,7 +83,9 @@ static int input_dev_demo_probe(struct platform_device *pdev)
 	//irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
 	//g_irq = irq->start;
 	g_irq = gpio_to_irq(gpio);
-	error = request_irq(g_irq, input_dev_demo_isr, IRQF_TRIGGER_FALLING | IRQF_TRIGGER_RISING, "input_dev_demo_irq", NULL);
+	error = request_irq(g_irq, input_dev_demo_isr, 
+					IRQF_TRIGGER_FALLING | IRQF_TRIGGER_RISING, 
+					"input_dev_demo_irq", NULL);
 
 	return 0;
 }

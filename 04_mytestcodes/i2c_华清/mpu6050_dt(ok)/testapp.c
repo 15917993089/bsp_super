@@ -26,7 +26,7 @@ int main(int argc,char **argv)
 	while(1){
 		sleep(2);
 
-		ioctl(fd,GET_ACCEL,&data);
+		ioctl(fd,GET_ACCEL,&data);//传进去，内核会自动帮我们填充这个data结构体
 		printf("Accel-x=0x%x\n",data.accel.x);
 		printf("Accel-y=0x%x\n",data.accel.y);
 		printf("Accel-z=0x%x\n",data.accel.z);

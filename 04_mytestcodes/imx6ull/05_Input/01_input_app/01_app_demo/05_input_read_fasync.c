@@ -11,14 +11,15 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-int fd;
+int fd;//牛逼
 
 void my_sig_handler(int sig)
 {
 	struct input_event event;
 	while (read(fd, &event, sizeof(event)) == sizeof(event))
 	{
-		printf("get event: type = 0x%x, code = 0x%x, value = 0x%x\n", event.type, event.code, event.value);		
+		printf("get event: type = 0x%x, code = 0x%x, value = 0x%x\n", 
+			event.type, event.code, event.value);		
 	}
 }
 

@@ -23,6 +23,7 @@
 
 static struct input_dev *g_input_dev;
 static int g_irq;//全局变量记录中断号
+
 static irqreturn_t input_dev_demo_isr(int irq, void *dev_id)
 {
 	/* read data读取硬件获得数据 */
@@ -69,7 +70,8 @@ static int input_dev_demo_probe(struct platform_device *pdev)
 	/* set 3: event params ? */	//这些参数是怎样的，哪个，最大和最小是什么
 	input_set_abs_params(g_input_dev, ABS_MT_POSITION_X, 0, 0xffff, 0, 0);
 	input_set_abs_params(g_input_dev, ABS_MT_POSITION_Y, 0, 0xffff, 0, 0);
-	
+
+	//注册
 	error = input_register_device(g_input_dev);
 
 	/* hardware opration */
@@ -77,7 +79,8 @@ static int input_dev_demo_probe(struct platform_device *pdev)
 	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
 	g_irq = irq->start;//中断号
 	//注册中断服务程序
-	request_irq(irq->start, input_dev_demo_isr, IRQF_TRIGGER_RISING, "input_dev_demo_irq", NULL);
+	request_irq(irq->start, input_dev_demo_isr, 
+				IRQF_TRIGGER_RISING, "input_dev_demo_irq", NULL);
 
 	return 0;
 }

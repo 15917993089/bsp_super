@@ -1,6 +1,4 @@
-
 #include <linux/module.h>
-
 #include <linux/init.h>
 #include <linux/fs.h>
 #include <linux/interrupt.h>
@@ -126,8 +124,9 @@ static int input_dev_demo_probe(struct platform_device *pdev)
 	error = input_register_device(g_input_dev);
 
 	/* hardware opration */
+	//获取寄存器资源
 	io = platform_get_resource(pdev, IORESOURCE_MEM, 0);//寄存器是io资源
-	ts_con = ioremap(io->start, io->end - io->start + 1);
+	ts_con = ioremap(io->start, io->end - io->start + 1);//映射寄存器地址
 
 
 	//irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
@@ -135,7 +134,9 @@ static int input_dev_demo_probe(struct platform_device *pdev)
 	//按下上传
 	g_irq = gpio_to_irq(gpio);//生成中断号
 	//上面获得gpio的属性之后，我们按下按键会产生一个中断，所以要注册中断
-	error = request_irq(g_irq, input_dev_demo_isr, IRQF_TRIGGER_FALLING | IRQF_TRIGGER_RISING, "input_dev_demo_irq", NULL);
+	error = request_irq(g_irq, input_dev_demo_isr, 
+					IRQF_TRIGGER_FALLING | IRQF_TRIGGER_RISING, 
+					"input_dev_demo_irq", NULL);
 	//滑动上传，设置定时器
 	setup_timer(&ts_timer, 
 			ts_irq_timer, (unsigned long)NULL);

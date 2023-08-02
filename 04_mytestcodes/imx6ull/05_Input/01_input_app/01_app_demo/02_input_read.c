@@ -71,7 +71,7 @@ int main(int argc, char **argv)
 	err = ioctl(fd, EVIOCGID, &id);//把地址传给这里，才可以去设置地址里面的内容！
 	if (err == 0)
 	{
-		printf("bustype = 0x%x\n", id.bustype );
+		printf("bustype = 0x%x\n", id.bustype );//打印地址里面的内容
 		printf("vendor	= 0x%x\n", id.vendor  );
 		printf("product = 0x%x\n", id.product );
 		printf("version = 0x%x\n", id.version );
@@ -83,11 +83,13 @@ int main(int argc, char **argv)
 		printf("support ev type: ");
 		for (i = 0; i < len; i++)
 		{
-			byte = ((unsigned char *)evbit)[i];
+			byte = ((unsigned char *)evbit)[i];//设置地址里面的内容
 			for (bit = 0; bit < 8; bit++)
 			{
-				if (byte & (1<<bit)) {
-					printf("%s ", ev_names[i*8 + bit]);
+				if (byte & (1<<bit)) {//哪一位为1表示哪一位去除哪一位，
+										
+					printf("%s ", ev_names[i*8 + bit]);//这种做法和lcd的显存转成oled的显存很相似
+														//类似于翻页
 				}
 			}
 		}
@@ -97,9 +99,10 @@ int main(int argc, char **argv)
 	while (1)
 	{
 		len = read(fd, &event, sizeof(event));//把地址传给这里，才可以去设置地址里面的内容！
-		if (len == sizeof(event))
+		if (len == sizeof(event))//表示读到数据
 		{
-			printf("get event: type = 0x%x, code = 0x%x, value = 0x%x\n", event.type, event.code, event.value);
+			printf("get event: type = 0x%x, code = 0x%x, value = 0x%x\n",
+				event.type, event.code, event.value);
 		}
 		else
 		{
