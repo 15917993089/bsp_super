@@ -38,7 +38,7 @@ static struct uart_driver virt_uart_drv = {
 
 static unsigned int virt_tx_empty(struct uart_port *port)
 {
-	/* 因为要发送的数据瞬间存入buffer */
+	/* 因为我们是虚拟要发送的数据瞬间存入buffer */
 	return 1;
 }
 
@@ -71,7 +71,7 @@ static void
 virt_set_termios(struct uart_port *port, struct ktermios *termios,
 		   struct ktermios *old)
 {
-	return;//波特率哪些，这个函数即使没有用也要留着，因为我们不涉及真正的硬件
+	return;//波特率那些，这个函数即使没有用也要留着，因为我们不涉及真正的硬件
 	//我们就把相关的函数设置为空函数
 }
 
@@ -116,12 +116,12 @@ static int virtual_uart_probe(struct platform_device *pdev)
 	virt_port->fifosize = 32;
 	virt_port->ops = &virt_pops;
 	virt_port->flags = UPF_BOOT_AUTOCONF;
-	
+	//注册
 	return uart_add_one_port(&virt_uart_drv, virt_port);
 }
 static int virtual_uart_remove(struct platform_device *pdev)
 {
-	
+	uart_remove_one_port(&virt_uart_drv, virt_port);
 	return 0;
 }
 

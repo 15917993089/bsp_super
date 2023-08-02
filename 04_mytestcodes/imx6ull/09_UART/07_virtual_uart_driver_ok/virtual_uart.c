@@ -114,7 +114,7 @@ static ssize_t virt_uart_buf_write (struct file *file, const char __user *buf, s
 
 	/* 模拟产生RX中断 */
 	irq_set_irqchip_state(virt_port->irq, IRQCHIP_STATE_PENDING, 1);//表示有中断在等待，
-																				//下面要注册一个中断处理函数
+																    //下面要注册一个中断处理函数
 	
 	return size;
 	//return 0;
@@ -272,6 +272,7 @@ static int virtual_uart_probe(struct platform_device *pdev)
 }
 static int virtual_uart_remove(struct platform_device *pdev)
 {
+	uart_remove_one_port(&virt_uart_drv, virt_port);
 	proc_remove(uart_proc_file);
 	return 0;
 }

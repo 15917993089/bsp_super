@@ -136,7 +136,7 @@ int read_gps_raw_data(int fd, char *buf)
 				start = 1;
 			if (start)
 			{
-				buf[i++] = c;
+				buf[i++] = c;//一个一个读，每读一个写进去一个
 			}
 			if (c == '\n' || c == '\r')
 				return 0;//成功
@@ -222,7 +222,7 @@ int main(int argc, char **argv)
 	{
 		/* eg. $GPGGA,082559.00,4005.22599,N,11632.58234,E,1,04,3.08,14.6,M,-5.6,M,,*76"<CR><LF>*/
 		/* read line */
-		iRet = read_gps_raw_data(fd, buf);
+		iRet = read_gps_raw_data(fd, buf);//这个buf是可以传回来的！！！
 		
 		/* parse line */
 		if (iRet == 0)
@@ -233,11 +233,11 @@ int main(int argc, char **argv)
 		/* printf */
 		if (iRet == 0)
 		{
-			printf("Time : %s\n", time);
-			printf("ns   : %s\n", ns);
-			printf("ew   : %s\n", ew);
-			printf("Lat  : %s\n", Lat);
-			printf("Lng  : %s\n", Lng);
+			printf("Time : %s\n", time);//时间
+			printf("ns   : %s\n", ns);//
+			printf("ew   : %s\n", ew);//
+			printf("Lat  : %s\n", Lat);//纬度
+			printf("Lng  : %s\n", Lng);//经度
 
 			/* 纬度格式: ddmm.mmmm */
 			sscanf(Lat+2, "%f", &fLat);//字符串转化为浮点数

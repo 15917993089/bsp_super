@@ -20,12 +20,12 @@ int set_opt(int fd,int nSpeed, int nBits, char nEvent, int nStop)
 	
 	bzero( &newtio, sizeof( newtio ) );//设置新的参数
 	newtio.c_cflag |= CLOCAL | CREAD; 
-	newtio.c_cflag &= ~CSIZE; 
+	newtio.c_cflag &= ~CSIZE; //配置为原始模式
 
 	newtio.c_lflag  &= ~(ICANON | ECHO | ECHOE | ISIG);  /*Input*/
 	newtio.c_oflag  &= ~OPOST;   /*Output*/
 
-	switch( nBits )
+	switch( nBits )//设置数据位
 	{
 	case 7:
 		newtio.c_cflag |= CS7;
@@ -35,7 +35,7 @@ int set_opt(int fd,int nSpeed, int nBits, char nEvent, int nStop)
 	break;
 	}
 
-	switch( nEvent )
+	switch( nEvent )//设置奇偶校验位
 	{
 	case 'O':
 		newtio.c_cflag |= PARENB;
@@ -52,7 +52,7 @@ int set_opt(int fd,int nSpeed, int nBits, char nEvent, int nStop)
 	break;
 	}
 
-	switch( nSpeed )
+	switch( nSpeed )//设置波特率
 	{
 	case 2400:
 		cfsetispeed(&newtio, B2400);
@@ -76,7 +76,7 @@ int set_opt(int fd,int nSpeed, int nBits, char nEvent, int nStop)
 	break;
 	}
 	
-	if( nStop == 1 )
+	if( nStop == 1 )//设置停止位
 		newtio.c_cflag &= ~CSTOPB;
 	else if ( nStop == 2 )
 		newtio.c_cflag |= CSTOPB;

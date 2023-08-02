@@ -127,26 +127,28 @@ ssize_t virt_uart_buf_read(struct file *file, char __user *buf, size_t size, lof
 	for (i = 0; i < cnt; i++)
 	{
 		txbuf_get(&val);//从环形缓冲区中把数据一个一个取出来
-		copy_to_user(buf+i, &val, 1);
+		copy_to_user(buf+i, &val, 1);//每取出一个就拷贝一个
 	}//这不是高效的方法
 	//高效的方法是一次性拷贝到用户空间
 	return cnt;
 }
 
-static ssize_t virt_uart_buf_write (struct file *file, const char __user *buf, size_t, loff_t *ppos);
+static ssize_t virt_uart_buf_write (struct file *file, const char __user *buf, size_t size, loff_t *ppos)
 {
+	int ret;
 	/* get data */
-	copy_from_user(rxbuf, buf, size);
+	ret = copy_from_user(rxbuf, buf, size);
 	rx_buf_w = size;
 
 	/* 模拟产生RX中断 */
 	irq_set_irqchip_state(virt_port->irq, IRQCHIP_STATE_PENDING, 1);//表示有中断在等待，
-																				//下面要注册一个中断处理函数
+																    //下面要注册一个中断处理函数
 	
 	return size;
 	//return 0;
 }
 
+//对接应用层
 static const struct file_operations virt_uart_buf_fops = {//虽然有这样的一个结构体但是我们要把他用起来
 															//创建一个虚拟文件
 	.read		= virt_uart_buf_read,
@@ -247,9 +249,7 @@ static int virtual_uart_probe(struct platform_device *pdev)
 
 	/* 从设备树获得硬件信息 */
 	rxirq = platform_get_irq(pdev, 0);
-	/* 注册一个中断 */
-	ret = devm_request_irq(&pdev->dev, rxirq, imx_rxint, 0,
-				       dev_name(&pdev->dev), virt_port);
+	
 	
 	/* 分配设置注册uart_port */
 	virt_port = devm_kzalloc(&pdev->dev, sizeof(*virt_port), GFP_KERNEL);
@@ -262,6 +262,10 @@ static int virtual_uart_probe(struct platform_device *pdev)
 	virt_port->flags = 0; // UPF_BOOT_AUTOCONF;
 	virt_port->type = PORT_8250;
 	virt_port->iobase = 1; /* 为了让uart_configure_port能执行 */
+
+	/* 注册一个中断 */
+	ret = devm_request_irq(&pdev->dev, rxirq, imx_rxint, 0,
+				       dev_name(&pdev->dev), virt_port);
 	
 	return uart_add_one_port(&virt_uart_drv, virt_port);
 }

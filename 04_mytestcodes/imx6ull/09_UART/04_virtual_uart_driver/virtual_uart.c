@@ -82,6 +82,7 @@ static void __exit virtual_uart_exit(void)
 	printk("%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
 	/* 2.1 反注册platform_driver */
 	platform_driver_unregister(&virtual_uart_driver);
+	uart_unregister_driver(&virt_uart_drv);
 }
 
 module_init(virtual_uart_init);

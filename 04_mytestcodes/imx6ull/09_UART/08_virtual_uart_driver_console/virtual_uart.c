@@ -33,10 +33,39 @@ static int tx_buf_r = 0;
 static int tx_buf_w = 0;
 
 static unsigned char rxbuf[BUF_LEN];
+static int rx_buf_r = 0;
 static int rx_buf_w = 0;
 
 static struct proc_dir_entry *uart_proc_file;
+static int txbuf_put(unsigned char val);
+static struct uart_driver virt_uart_drv;
 
+/*
+ * Interrupts are disabled on entering
+ */
+static void virt_uart_console_write(struct console *co, const char *s, unsigned int count)
+{
+	int i;
+	for (i = 0; i < count; i++)
+		if (txbuf_put(s[i]) != 0)//把数据存入一个环形缓冲区，如果是真是的硬件就是把数据发到硬件上去
+			return;
+}
+struct tty_driver *virt_uart_console_device(struct console *co, int *index)
+{
+	struct uart_driver *p = co->data;
+	*index = co->index;
+	return p->tty_driver;
+}
+
+
+static struct console virt_uart_console = {
+	.name		= "ttyVIRT",
+	.write		= virt_uart_console_write,
+	.device		= virt_uart_console_device,
+	.flags		= CON_PRINTBUFFER,
+	.index		= -1,
+	.data       = &virt_uart_drv,
+};
 
 
 static struct uart_driver virt_uart_drv = {
@@ -46,6 +75,7 @@ static struct uart_driver virt_uart_drv = {
 	.major          = 0,
 	.minor          = 0,
 	.nr             = 1,
+	.cons			= &virt_uart_console,//增加的consol结构体
 };
 
 /* circle buffer */
@@ -273,6 +303,7 @@ static int virtual_uart_probe(struct platform_device *pdev)
 }
 static int virtual_uart_remove(struct platform_device *pdev)
 {
+	uart_remove_one_port(&virt_uart_drv, virt_port);
 	proc_remove(uart_proc_file);
 	return 0;
 }
